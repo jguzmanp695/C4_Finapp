@@ -24,22 +24,41 @@ export function App(){
         localStorage.setItem('KEY', JSON.stringify(contacts))
     }, [contacts])
 
+
+    const checkContact = (id)=>{
+        const newContacts = [...contacts]
+        const contact = newContacts.find((contact) => contact.id === id)
+        contact.isSelected = !contact.isSelected
+        setContacts(newContacts)
+    }
+
+
     //
     const addContact = ()=>{
         const name = contactRef.current.value
         if(name === '') return
         setContacts((oldContacts)=>{
-            return [...oldContacts, {id: uuid(), name}]
+            return [...oldContacts, {id: uuid(), name, isSelected: false}]
         })
         contactRef.current.value = null
     }
 
+
+    //Función eliminar, con registros seleccionados
+    const deleteContact = ()=>{
+        const selectedContacts = contacts.filter((contact) => !contact.isSelected)
+        setContacts(selectedContacts)
+    }
+
+
     // return ( <div>Hola React</div> )
     return (
         <Fragment>
-        <ContactList contacts={contacts} />
+        <ContactList contacts={contacts} checkContact={checkContact} />
         <input ref={contactRef} type="text" placeholder= "nuevo contacto" />
         <button onClick={addContact}>🙎‍♂️Add</button>
+        <button onClick={deleteContact}>❌Delete</button>
+        <p> 🙋‍♂️{contacts.filter((contact) => contact.isSelected).length} contactos seleccionados </p>
         </Fragment>
     )
 }
